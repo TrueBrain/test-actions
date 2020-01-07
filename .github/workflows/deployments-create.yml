@@ -1,0 +1,22 @@
+name: Test deployments-create
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  test:
+    name: Test deployments-create
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Trigger deployment
+      uses: truebrain/openttd-actions/deployments-create@master
+      with:
+        ref: refs/heads/master
+        environment: staging
+        version: 1.0
+        date: never
+        docker-tag: none
+        github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
