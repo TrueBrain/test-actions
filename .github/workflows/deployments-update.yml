@@ -1,0 +1,24 @@
+name: Test deployments-update
+
+on:
+  deployment:
+
+jobs:
+  test:
+    name: Test deployments-update
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: State in-progress
+      uses: truebrain/openttd-actions/deployments-update@master
+      with:
+        github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
+        state: in_progress
+
+    - name: State success
+      uses: truebrain/openttd-actions/deployments-update@master
+      with:
+        github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
+        state: success
+        description: 'a description'
+        url: 'https://www.google.com'
