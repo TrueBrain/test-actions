@@ -37,7 +37,7 @@ jobs:
         version: ${{ steps.vars.outputs.version }}
         date: ${{ steps.vars.outputs.date }}
 
-    - if: steps.vars.outputs.dryrun == 'false'
+    - if: steps.vars.outputs.dry-run == 'false'
       name: Publish
       id: publish
       uses: truebrain/openttd-actions/docker-publish@master
@@ -47,7 +47,7 @@ jobs:
         name: ${{ steps.vars.outputs.name }}
         tag: ${{ steps.vars.outputs.tag }}
 
-    - if: steps.vars.outputs.dryrun == 'false'
+    - if: steps.vars.outputs.dry-run == 'false'
       name: Trigger deployment
       uses: truebrain/openttd-actions/deployments-create@master
       with:
