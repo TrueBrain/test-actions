@@ -1,4 +1,4 @@
-name: Deployment
+name: Test deployment
 
 on:
   deployment:
@@ -22,7 +22,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-region: ${{ secrets.AWS_REGION }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        NAME: Testing
+        name: Testing
 
     - if: success()
       name: Deployment successful
