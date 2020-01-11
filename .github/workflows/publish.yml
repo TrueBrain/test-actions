@@ -1,0 +1,59 @@
+name: Test publish
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  publish_image:
+    name: Publish image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Checkout tags and submodules
+      uses: truebrain/openttd-actions/checkout@master
+      with:
+        with-tags: true
+        with-submodules: true
+
+    - name: Set variables
+      id: vars
+      uses: truebrain/openttd-actions/docker-vars@master
+      with:
+        docker-hub-username: ${{ secrets.DOCKER_USERNAME }}
+
+    - name: Build
+      uses: truebrain/openttd-actions/docker-build@master
+      with:
+        name: ${{ steps.vars.outputs.name }}
+        tag: ${{ steps.vars.outputs.tag }}
+        tags: ${{ steps.vars.outputs.tags }}
+        version: ${{ steps.vars.outputs.version }}
+        date: ${{ steps.vars.outputs.date }}
+
+    - if: steps.vars.outputs.dryrun == 'false'
+      name: Publish
+      id: publish
+      uses: truebrain/openttd-actions/docker-publish@master
+      with:
+        docker-hub-username: ${{ secrets.DOCKER_USERNAME }}
+        docker-hub-password: ${{ secrets.DOCKER_PASSWORD }}
+        name: ${{ steps.vars.outputs.name }}
+        tag: ${{ steps.vars.outputs.tag }}
+
+    - if: steps.vars.outputs.dryrun == 'false'
+      name: Trigger deployment
+      uses: truebrain/openttd-actions/deployments-create@master
+      with:
+        ref: ${{ steps.vars.outputs.sha }}
+        environment: ${{ steps.vars.outputs.environment }}
+        version: ${{ steps.vars.outputs.version }}
+        date: ${{ steps.vars.outputs.date }}
+        docker-tag: ${{ steps.publish.outputs.docker_tag }}
+        github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
