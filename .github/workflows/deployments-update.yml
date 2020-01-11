@@ -1,24 +1,41 @@
-name: Test deployments-update
+name: Deployment
 
 on:
   deployment:
 
 jobs:
-  test:
-    name: Test deployments-update
+  deploy_to_aws:
+    name: Deploy to AWS
     runs-on: ubuntu-latest
 
     steps:
-    - name: State in-progress
+    - name: Deployment in progress
       uses: truebrain/openttd-actions/deployments-update@master
       with:
         github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
         state: in_progress
+        description: "Deployment of ${{ github.event.deployment.payload.version }} to ${{ github.event.deployment.environment }} started"
 
-    - name: State success
+    - name: Deploy on AWS
+      uses: truebrain/openttd-actions/deploy-aws@master
+      with:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        NAME: Testing
+
+    - if: success()
+      name: Deployment successful
       uses: truebrain/openttd-actions/deployments-update@master
       with:
         github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
         state: success
-        description: 'a description'
-        url: 'https://www.google.com'
+        description: "Successfully deployed ${{ github.event.deployment.payload.version }} on ${{ github.event.deployment.environment }}"
+        url: "https://www.staging.openttd.org/"
+
+    - if: failure() || cancelled()
+      name: Deployment failed
+      uses: truebrain/openttd-actions/deployments-update@master
+      with:
+        github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
+        state: failure
