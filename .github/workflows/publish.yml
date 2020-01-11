@@ -55,5 +55,5 @@ jobs:
         environment: ${{ steps.vars.outputs.environment }}
         version: ${{ steps.vars.outputs.version }}
         date: ${{ steps.vars.outputs.date }}
-        docker-tag: ${{ steps.publish.outputs.docker_tag }}
+        docker-tag: ${{ steps.publish.outputs.remote-tag }}
         github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
