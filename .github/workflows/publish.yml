@@ -4,6 +4,10 @@ on:
   push:
     branches:
     - master
+  repository_dispatch:
+    types:
+    - publish_latest_tag
+    - publish_master
 
 jobs:
   publish_image:
@@ -15,6 +19,10 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
+
+    - if: github.event_name == 'repository_dispatch'
+      name: Repository dispatch
+      uses: truebrain/openttd-actions/checkout-dispatch@master
 
     - name: Checkout tags and submodules
       uses: truebrain/openttd-actions/checkout@master
