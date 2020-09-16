@@ -34,7 +34,7 @@ jobs:
       id: vars
       uses: truebrain/openttd-actions/docker-vars@master
       with:
-        docker-hub-username: ${{ secrets.DOCKER_USERNAME }}
+        registry-username: ${{ secrets.GHCR_USERNAME }}
 
     - name: Build
       uses: truebrain/openttd-actions/docker-build@master
@@ -44,16 +44,18 @@ jobs:
         tags: ${{ steps.vars.outputs.tags }}
         version: ${{ steps.vars.outputs.version }}
         date: ${{ steps.vars.outputs.date }}
+        registry: ghcr.io
 
     - if: steps.vars.outputs.dry-run == 'false'
       name: Publish
       id: publish
       uses: truebrain/openttd-actions/docker-publish@master
       with:
-        docker-hub-username: ${{ secrets.DOCKER_USERNAME }}
-        docker-hub-password: ${{ secrets.DOCKER_PASSWORD }}
+        registry-username: ${{ secrets.GHCR_USERNAME }}
+        registry-password: ${{ secrets.GHCR_PASSWORD }}
         name: ${{ steps.vars.outputs.name }}
         tag: ${{ steps.vars.outputs.tag }}
+        registry: ghcr.io
 
     - if: steps.vars.outputs.dry-run == 'false'
       name: Trigger deployment
